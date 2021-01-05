@@ -7,7 +7,8 @@ searched_item = "żubrówka 0.5"
 
 class GoogleSpider(scrapy.Spider):
 
-
+    # Number of scraped sites
+    i = 0
     name = "google"
     start_urls = [
         'https://www.google.com/search?q=%C5%BCubr%C3%B3wka+0.5'
@@ -25,19 +26,19 @@ class GoogleSpider(scrapy.Spider):
             if (len(str(link))>220 or searched_item in link.text) and \
                     'ceneo' not in link.text and 'oferteo' not in link.text and \
                     'Zaloguj sie' not in link.text:
-                print(len(str(link)),link.text,link,"\n")
+                print(self.i,len(str(link)),link.text,link,"\n")
                 self.link_list.append(link)
                 self.link_text.append(link.text)
+                self.i += 1
         # Find "next page" button with xpath
         next_page =  "https://www.google.com" + str(response.css("a").xpath("@href")[-5].get())
         # limit number of scraped pages.
-        page_limit = 5
+        page_limit = 2
         page_number = 1
 
         # Switch page.
-        if page_number <= page_limit:
+        if self.i <= 50:
             yield response.follow(next_page, callback=self.parse)
-            page_number += 1
         # Put list data into a DataFrame and import it to csv file.
         self.df['links'] = self.link_list
         self.df['link_text'] = self.link_text
