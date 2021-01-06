@@ -1,6 +1,7 @@
 import scrapy
 import pandas as pd
 from ..items import PriceComparisonItem
+from datetime import date
 
 
 # Get clear link
@@ -10,6 +11,8 @@ from ..items import PriceComparisonItem
 
 class PriceSpider(scrapy.Spider):
     name = "foczka"
+    today = date.today().strftime("%d/%m/%Y")
+    page_number = 2
     start_urls = [
         'https://www.foczkaalkohole.pl/kategoria-produktu/wodka/'
 
@@ -26,17 +29,19 @@ class PriceSpider(scrapy.Spider):
 
             items['product'] = product
             items['price'] = price
-            items['store_name'] = 'foczkaalkohole'
+            items['store_name'] = 'Foczka Alkohole'
+            items['date'] = self.today
             yield items
 
-        next_page = response.xpath("//*[@id='main']/div/nav[2]/ul/li[6]/a").attrib['href']
+        next_page = 'https://www.foczkaalkohole.pl/kategoria-produktu/wodka/page/{}/'.format(self.page_number)
 
-        if next_page is not None:
+        if self.page_number <= 5:
+            self.page_number += 1
             yield response.follow(next_page, callback=self.parse)
-
 
 class PriceSpider2(scrapy.Spider):
     name = "hurtowo"
+    today = date.today().strftime("%d/%m/%Y")
     page_number = 2
     start_urls = [
         'https://alkoholehurtowo.pl/kategoria-produktu/rodzaje-alkoholi/wodki/'
@@ -50,10 +55,10 @@ class PriceSpider2(scrapy.Spider):
             items['price'] = response.xpath(
                 '//*[@id="woo-products-wrap"]/ul/li[{}]/div/div[2]/div/div[1]/h4/span/text()'.format(i)).extract()
             items['product'] = response.xpath('//*[@id="woo-products-wrap"]/ul/li[{}]/div/div[2]/h3/a/text()'.format(i)).extract()
-            items['store_name'] = 'alkoholehurtowo'
+            items['store_name'] = 'Alkohole Hurtowo'
+            items['date'] = self.today
             i += 1
             yield items
-
 
         next_page = 'https://alkoholehurtowo.pl/kategoria-produktu/rodzaje-alkoholi/wodki/page/{}/'.format(self.page_number)
 
@@ -61,27 +66,3 @@ class PriceSpider2(scrapy.Spider):
             self.page_number += 1
             yield response.follow(next_page, callback=self.parse)
 
-# //*[@id="woo-products-wrap"]/ul/li[1]
-# //*[@id="woo-products-wrap"]/ul/li[2]
-#
-# NAZWA
-# //*[@id="woo-products-wrap"]/ul/li[1]/div/div[2]/h3/a
-# //*[@id="woo-products-wrap"]/ul/li[2]/div/div[2]/h3/a
-# //*[@id="woo-products-wrap"]/ul/li[1]/div/div[2]/h3/a
-#
-#
-# CENA
-# //*[@id="woo-products-wrap"]/ul/li[1]/div/div[2]/div/div[1]/h4/span
-# //*[@id="woo-products-wrap"]/ul/li[2]/div/div[2]/div/div[1]/h4/span
-
-#
-# while True:
-#        try:
-#            items['price'] = response.xpath('//*[@id="woo-products-wrap"]/ul/li[{}]/div/div[2]/div/div[1]/h4/span/text()'.format(i)).extract()
-#            items['product'] = response.xpath('//*[@id="woo-products-wrap"]/ul/li[{}]/div/div[2]/h3/a/text()'.format(i)).extract()
-#            i += 1
-#
-#            yield items
-#        except:
-#            return False
-#            break
