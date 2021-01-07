@@ -39,6 +39,7 @@ class PriceSpider(scrapy.Spider):
             self.page_number += 1
             yield response.follow(next_page, callback=self.parse)
 
+
 class PriceSpider2(scrapy.Spider):
     name = "hurtowo"
     today = date.today().strftime("%d/%m/%Y")
@@ -66,3 +67,41 @@ class PriceSpider2(scrapy.Spider):
             self.page_number += 1
             yield response.follow(next_page, callback=self.parse)
 
+
+class PriceSpider3(scrapy.Spider):
+
+    name = 'amarone'
+    today = date.today().strftime("%d/%m/%Y")
+    page_number = 2
+    start_urls = [
+        'http://www.amarone.pl/index.php/alkohole/wodki'
+    ]
+
+    def parse(self,response):
+        items = PriceComparisonItem()
+
+        all_vodkas = response.css("div.spacer")
+        for vodka in all_vodkas:
+            items['product'] = vodka.css("div.vm-product-descr-container-0 h2").extract()
+            items['price'] = vodka.css("span.PricesalesPrice::text").extract()
+            items['store_name'] = 'Amarone'
+            items['date'] = self.today
+
+
+
+# BLOKI
+# //*[@id="bd_results"]/div[6]/div[30]/div[1]/div
+# //*[@id="bd_results"]/div[6]/div[30]/div[2]/div
+#
+# CENA
+# //*[@id="productPrice7102"]/div/span[2]
+# //*[@id="productPrice7102"]/div/span[2]
+# //*[@id="productPrice7099"]/div/span[2]
+# //*[@id="productPrice7098"]/div/span[2]
+# //*[@id="productPrice7098"]/div/span[2]
+# //*[@id="productPrice7096"]/div/span[2]
+#response.css("span.PricesalesPrice::text").extract()
+
+# NAZWA
+# //*[@id="bd_results"]/div[6]/div[30]/div[1]/div/div[3]/h2/a
+# //*[@id="bd_results"]/div[6]/div[30]/div[2]/div/div[3]/h2/a
