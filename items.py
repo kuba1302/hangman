@@ -8,5 +8,7 @@ import scrapy
 
 class PriceComparisonItem(scrapy.Item):
     # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+    price = scrapy.Field()
+    store_name = scrapy.Field()
+    product = scrapy.Field()
+    date = scrapy.Field()
