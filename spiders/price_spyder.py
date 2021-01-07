@@ -72,7 +72,7 @@ class PriceSpider3(scrapy.Spider):
 
     name = 'amarone'
     today = date.today().strftime("%d/%m/%Y")
-    page_number = 2
+    page_number = 99
     start_urls = [
         'http://www.amarone.pl/index.php/alkohole/wodki'
     ]
@@ -87,6 +87,11 @@ class PriceSpider3(scrapy.Spider):
             items['store_name'] = 'Amarone'
             items['date'] = self.today
 
+        next_page = "http://www.amarone.pl/index.php/alkohole/wodki?start={}".format(self.page_number)
+
+        if self.page_number <= 891:
+            self.page_number += 99
+            yield response.follow(next_page,callback=self.parse)
 
 
 # BLOKI
