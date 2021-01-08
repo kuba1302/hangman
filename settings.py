@@ -21,7 +21,7 @@ ROBOTSTXT_OBEY = False
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
 
-PROXY_POOL_ENABLED = True
+# PROXY_POOL_ENABLED = True
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
@@ -49,12 +49,12 @@ DOWNLOAD_DELAY = 0.25
 #    'price_comparison.middlewares.PriceComparisonSpiderMiddleware': 543,
 #}
 #PROXY
-DOWNLOADER_MIDDLEWARES = {
-    # ...
-    'scrapy_proxy_pool.middlewares.ProxyPoolMiddleware': 610,
-    'scrapy_proxy_pool.middlewares.BanDetectionMiddleware': 620,
-    # ...
-}
+# DOWNLOADER_MIDDLEWARES = {
+#     # ...
+#     'scrapy_proxy_pool.middlewares.ProxyPoolMiddleware': 610,
+#     'scrapy_proxy_pool.middlewares.BanDetectionMiddleware': 620,
+#     # ...
+# }
 
 
 #USER AGENTS

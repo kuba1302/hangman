@@ -93,6 +93,69 @@ class PriceSpider3(scrapy.Spider):
             self.page_number += 99
             yield response.follow(next_page,callback=self.parse)
 
+class PriceSpider4(scrapy.Spider):
+
+    name = 'zagrosze'
+    today = date.today().strftime("%d/%m/%Y")
+    page_number = 2
+    start_urls = [
+        'https://alkoholezagrosze.pl/43-wodki-czyste'
+    ]
+
+    def parse(self,response):
+        items = PriceComparisonItem()
+
+        items['store_name'] = 'Alkohole za grosze'
+        items['date'] = self.today
+
+        all_vodkas = response.css("div.border_inside")
+        for vodka in all_vodkas:
+            items['product'] = vodka.css("a.product-name::text").extract()
+            items['price'] = vodka.css("span.product-price::text").extract()
+
+            yield items
+
+        next_page = 'https://alkoholezagrosze.pl/43-wodki-czyste?p=' + str(self.page_number)
+
+        if self.page_number <= 5:
+            self.page_number += 1
+            yield response.follow(next_page, callback=self.parse)
+
+class PriceSpider5(scrapy.Spider):
+
+    name = 'alkohol_online'
+    today = date.today().strftime("%d/%m/%Y")
+    page_number = 2
+    start_urls = [
+        'https://alkohol-online.pl/18-czysta-biala'
+    ]
+
+    def parse(self, response):
+        items = PriceComparisonItem()
+
+        items['store_name'] = 'Alkohol online'
+        items['date'] = self.today
+
+        all_vodkas = response.css("div.product-container")
+        for vodka in all_vodkas:
+            product = vodka.css("span.product-name a::text").extract()
+            price = vodka.css("span.product-price::text").extract()
+
+            while "\n" in product: product.remove("\n")
+            while "\t" in product: product.remove("\t")
+            while "\n" in price: price.remove("\n")
+            while "\t" in price: price.remove("\t")
+
+            items['product'] = product
+            items['price'] = price
+
+            yield items
+
+        next_page = 'https://alkohol-online.pl/18-czysta-biala#/page-' + str(self.page_number)
+
+        if self.page_number <= 3:
+            self.page_number += 1
+            yield response.follow(next_page, callback=self.parse)
 
 # BLOKI
 # //*[@id="bd_results"]/div[6]/div[30]/div[1]/div
