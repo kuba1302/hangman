@@ -1,7 +1,8 @@
 import scrapy
-import pandas as pd
 from ..items import PriceComparisonItem
 from datetime import date
+import logging
+import pandas as pd
 
 
 # Get clear link
@@ -77,7 +78,7 @@ class PriceSpider3(scrapy.Spider):
         'http://www.amarone.pl/index.php/alkohole/wodki'
     ]
 
-    def parse(self,response):
+    def parse(self, response):
         items = PriceComparisonItem()
 
         all_vodkas = response.css("div.spacer")
@@ -91,7 +92,8 @@ class PriceSpider3(scrapy.Spider):
 
         if self.page_number <= 891:
             self.page_number += 99
-            yield response.follow(next_page,callback=self.parse)
+            yield response.follow(next_page, callback=self.parse)
+
 
 class PriceSpider4(scrapy.Spider):
 
@@ -102,7 +104,7 @@ class PriceSpider4(scrapy.Spider):
         'https://alkoholezagrosze.pl/43-wodki-czyste'
     ]
 
-    def parse(self,response):
+    def parse(self, response):
         items = PriceComparisonItem()
 
         items['store_name'] = 'Alkohole za grosze'
@@ -121,13 +123,13 @@ class PriceSpider4(scrapy.Spider):
             self.page_number += 1
             yield response.follow(next_page, callback=self.parse)
 
+
 class PriceSpider5(scrapy.Spider):
 
     name = 'alkohol_online'
     today = date.today().strftime("%d/%m/%Y")
-    page_number = 2
     start_urls = [
-        'https://alkohol-online.pl/18-czysta-biala'
+        'https://alkohol-online.pl/18-czysta-biala?id_category=18&n=110'
     ]
 
     def parse(self, response):
@@ -141,35 +143,40 @@ class PriceSpider5(scrapy.Spider):
             product = vodka.css("span.product-name a::text").extract()
             price = vodka.css("span.product-price::text").extract()
 
-            while "\n" in product: product.remove("\n")
-            while "\t" in product: product.remove("\t")
-            while "\n" in price: price.remove("\n")
-            while "\t" in price: price.remove("\t")
+            product[0] = product[0].strip()
+            price[0] = price[0].strip()
+            del price[1]
 
             items['product'] = product
             items['price'] = price
 
             yield items
 
-        next_page = 'https://alkohol-online.pl/18-czysta-biala#/page-' + str(self.page_number)
 
-        if self.page_number <= 3:
+class PriceSpider6(scrapy.Spider):
+
+    name = 'hurtownia_alkoholi'
+    today = date.today().strftime("%d/%m/%Y")
+    page_number = 2
+    start_urls = [
+        'https://hurtowniaalkoholi.pl/products/list/category/W%C3%B3dki'
+    ]
+
+    def parse(self, response):
+        items = PriceComparisonItem()
+
+        items['store_name'] = 'Hurtownia alkoholi'
+        items['date'] = self.today
+
+        all_vodkas = response.css("div.col-md-8")
+        for vodka in all_vodkas:
+            items['product'] = vodka.css("a.href_fix h4::text").extract()
+            items['price'] = vodka.css("span.cena-brutto::text").extract()
+
+            yield items
+
+        next_page = 'https://hurtowniaalkoholi.pl/products/list/category/W%C3%B3dki/page/' + str(self.page_number)
+
+        if self.page_number <= 9:
             self.page_number += 1
             yield response.follow(next_page, callback=self.parse)
-
-# BLOKI
-# //*[@id="bd_results"]/div[6]/div[30]/div[1]/div
-# //*[@id="bd_results"]/div[6]/div[30]/div[2]/div
-#
-# CENA
-# //*[@id="productPrice7102"]/div/span[2]
-# //*[@id="productPrice7102"]/div/span[2]
-# //*[@id="productPrice7099"]/div/span[2]
-# //*[@id="productPrice7098"]/div/span[2]
-# //*[@id="productPrice7098"]/div/span[2]
-# //*[@id="productPrice7096"]/div/span[2]
-#response.css("span.PricesalesPrice::text").extract()
-
-# NAZWA
-# //*[@id="bd_results"]/div[6]/div[30]/div[1]/div/div[3]/h2/a
-# //*[@id="bd_results"]/div[6]/div[30]/div[2]/div/div[3]/h2/a
