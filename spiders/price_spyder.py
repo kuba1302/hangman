@@ -30,12 +30,13 @@ class PriceSpider(scrapy.Spider):
         for vodka in response.xpath("//*[@id='main']/div/ul/li"):
             items['product'] = vodka.xpath("//*[@id='main']/div/ul/li[{}]/div[2]/a[1]/h3//text()".format(i)).extract()
             price = vodka.css("bdi::text").extract()
-            if len(price)>0:
-                price[0] = unicodedata.normalize("NFKD", price[0])
-                price[0] = price[0].replace("zł", "")
-                items['price'] = price[0].replace(" ", "")
-            else:
-                items['price'] = price
+            items['price'] = price
+            # if len(price)>0:
+            #     price[0] = unicodedata.normalize("NFKD", price[0])
+            #     price[0] = price[0].replace("zł", "")
+            #     items['price'] = price[0].replace(" ", "")
+            # else:
+            #     items['price'] = price
 
             i += 1
             yield items
@@ -67,12 +68,13 @@ class PriceSpider2(scrapy.Spider):
         while i <= 9:
             items['product'] = response.xpath('//*[@id="woo-products-wrap"]/ul/li[{}]/div/div[2]/h3/a/text()'.format(i)).extract()
             price = response.xpath('//*[@id="woo-products-wrap"]/ul/li[{}]/div/div[2]/div/div[1]/h4/span/text()'.format(i)).extract()
-            if len(price) > 0:
-                price[0] = unicodedata.normalize("NFKD", price[0])
-                price[0] = price[0].replace("zł", "")
-                items['price'] = price[0].replace(" ", "")
-            else:
-                items['price'] = price
+            items['price'] = price
+            # if len(price) > 0:
+            #     price[0] = unicodedata.normalize("NFKD", price[0])
+            #     price[0] = price[0].replace("zł", "")
+            #     items['price'] = price[0].replace(" ", "")
+            # else:
+            #     items['price'] = price
 
             i += 1
             yield items
@@ -104,12 +106,13 @@ class PriceSpider3(scrapy.Spider):
         for vodka in all_vodkas:
             items['product'] = vodka.css("h2.product-title a::text").extract()
             price = vodka.css("span.PricesalesPrice::text").extract()
-            if len(price) > 0:
-                price[0] = unicodedata.normalize("NFKD", price[0])
-                price[0] = price[0].replace("zł", "")
-                items['price'] = price[0].replace(" ", "")
-            else:
-                items['price'] = price
+            items['price'] = price
+            # if len(price) > 0:
+            #     price[0] = unicodedata.normalize("NFKD", price[0])
+            #     price[0] = price[0].replace("zł", "")
+            #     items['price'] = price[0].replace(" ", "")
+            # else:
+            #     items['price'] = price
 
             yield items
 
@@ -140,9 +143,10 @@ class PriceSpider4(scrapy.Spider):
         for vodka in all_vodkas:
             items['product'] = vodka.css("a.product-name::text").extract()
             price = vodka.css("span.product-price::text").extract()
-            price[0] = unicodedata.normalize("NFKD", price[0])
-            price[0] = price[0].replace("zł", "")
-            items['price'] = price[0].replace(" ", "")
+            # price[0] = unicodedata.normalize("NFKD", price[0])
+            # price[0] = price[0].replace("zł", "")
+            # items['price'] = price[0].replace(" ", "")
+            items['price'] = price
             yield items
 
         next_page = 'https://alkoholezagrosze.pl/43-wodki-czyste?p=' + str(self.page_number)
@@ -152,7 +156,7 @@ class PriceSpider4(scrapy.Spider):
             yield response.follow(next_page, callback=self.parse)
 
 
-# gituwa
+# gituwa TU JEST ZJEBANE
 class PriceSpider5(scrapy.Spider):
 
     name = 'alkohol_online'
@@ -204,9 +208,10 @@ class PriceSpider6(scrapy.Spider):
         for vodka in all_vodkas:
             items['product'] = vodka.css("a.href_fix h4::text").extract()
             price = vodka.css("span.cena-brutto::text").extract()
-            price[0] = unicodedata.normalize("NFKD", price[0])
-            price[0] = price[0].replace("zł", "")
-            items['price'] = price[0].replace(" ", "")
+            items['price'] = price
+            # price[0] = unicodedata.normalize("NFKD", price[0])
+            # price[0] = price[0].replace("zł", "")
+            # items['price'] = price[0].replace(" ", "")
 
             yield items
 
@@ -301,9 +306,10 @@ class PriceSpider9(scrapy.Spider):
             product = vodka.css("a.product-item-link::text").extract()
             items['product'] = product[0].strip()
             price = vodka.css("span.price::text").extract()
-            price[0] = unicodedata.normalize("NFKD", price[0])
-            price[0] = price[0].replace("zł", "")
-            items['price'] = price[0].replace(" ", "")
+            # price[0] = unicodedata.normalize("NFKD", price[0])
+            # price[0] = price[0].replace("zł", "")
+            # items['price'] = price[0].replace(" ", "")
+            items['price'] = price
 
             yield items
 
@@ -338,6 +344,7 @@ class PriceSpider10(scrapy.Spider):
             price[0] = unicodedata.normalize("NFKD", price[0])
             price[0] = price[0].replace("zł", "")
             items['price'] = price[0].replace(" ", "")
+
 
             yield items
 
