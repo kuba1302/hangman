@@ -18,8 +18,7 @@ class GoogleSpider(scrapy.Spider):
     ]
     # Prepare empty list and data frame / might change to items later
     # df = pd.DataFrame()
-    # link_list = []
-    # link_text = []
+
 
 
     def parse(self,response):
