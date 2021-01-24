@@ -17,11 +17,11 @@ spiders = [PriceSpider ,PriceSpider2 ,PriceSpider3 ,PriceSpider4,
            PriceSpider9, PriceSpider10]
 
 if __name__ == "__main__":
-    # for spider in spiders:
-    #     process.crawl(spider)
-    # process.start()
+    for spider in spiders:
+        process.crawl(spider)
+    process.start()
     while True:
-        df = pd.read_csv(r'C:\Users\Admin\Desktop\UW\PYTHON\Projekt\price_comparison\price_comparison\spiders\vodka.csv')
+        df = pd.read_csv(r'C:\Users\andrzej.zernaczuk\PycharmProjects\Projekt_Nawaro\price_comparison\price_comparison\price_comparison\spiders\vodka.csv')
         df.dropna()
         df = df[~df['price'].isnull()]
         df.drop(df.loc[df['price'] == 'price'].index, inplace=True)
