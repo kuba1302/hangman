@@ -6,26 +6,30 @@ import pandas as pd
 import unicodedata
 
 
-
 class PriceSpider(scrapy.Spider):
     name = "foczka"
     today = date.today().strftime("%d/%m/%Y")
-    page_number = 2
-    start_urls = [
-        'https://www.foczkaalkohole.pl/kategoria-produktu/wodka/'
 
-    ]
+    start_urls = ['https://www.foczkaalkohole.pl/kategoria-produktu/wodka/']
+    base_url = 'https://www.foczkaalkohole.pl/kategoria-produktu/'
+    categories = {"url": ["wodka", "wino", "whisky"],
+                  "type": ["vodka", "wine", "whisky"],
+                  "pages": [5, 6, 4]
+                  }
+    instance = 0
+    page_number = 2
 
     def parse(self, response):
         items = PriceComparisonItem()
         print("Checking foczkaalkohole...")
         items['store_name'] = 'Foczka Alkohole'
         items['date'] = self.today
+        items['category'] = self.categories["type"][self.instance]
 
         i = 1
-        for vodka in response.xpath("//*[@id='main']/div/ul/li"):
-            items['product'] = vodka.xpath("//*[@id='main']/div/ul/li[{}]/div[2]/a[1]/h3//text()".format(i)).extract()
-            price = vodka.css("bdi::text").extract()
+        for alcohol in response.xpath("//*[@id='main']/div/ul/li"):
+            items['product'] = alcohol.xpath("//*[@id='main']/div/ul/li[{}]/div[2]/a[1]/h3//text()".format(i)).extract()
+            price = alcohol.css("bdi::text").extract()
             items['price'] = price
             # if len(price)>0:
             #     price[0] = unicodedata.normalize("NFKD", price[0])
@@ -37,10 +41,15 @@ class PriceSpider(scrapy.Spider):
             i += 1
             yield items
 
-        next_page = 'https://www.foczkaalkohole.pl/kategoria-produktu/wodka/page/{}/'.format(self.page_number)
+        next_page = self.base_url + self.categories["url"][self.instance] + "/page/" + str(self.page_number)
 
-        if self.page_number <= 5:
+        if self.page_number <= int(self.categories['pages'][self.instance]):
             self.page_number += 1
+            yield response.follow(next_page, callback=self.parse)
+        elif self.instance <= 2:
+            self.instance += 1
+            self.page_number = 2
+            next_page = self.base_url + self.categories["url"][self.instance]
             yield response.follow(next_page, callback=self.parse)
 
 
@@ -50,7 +59,6 @@ class PriceSpider2(scrapy.Spider):
     page_number = 2
     start_urls = [
         'https://alkoholehurtowo.pl/kategoria-produktu/rodzaje-alkoholi/wodki/'
-
     ]
 
     def parse(self, response):
@@ -147,7 +155,6 @@ class PriceSpider4(scrapy.Spider):
         if self.page_number <= 5:
             self.page_number += 1
             yield response.follow(next_page, callback=self.parse)
-
 
 
 class PriceSpider5(scrapy.Spider):
@@ -337,7 +344,6 @@ class PriceSpider10(scrapy.Spider):
             price[0] = unicodedata.normalize("NFKD", price[0])
             price[0] = price[0].replace("zł", "")
             items['price'] = price[0].replace(" ", "")
-
 
             yield items
 
