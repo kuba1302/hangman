@@ -31,10 +31,10 @@ if __name__ == "__main__":
         check_df = df.loc[df['product'].str.contains("{}".format(checked_vodka), na=False)]
         minimum = check_df.loc[check_df['price'] == check_df['price'].min()]
         print(minimum)
-        if_continue = input("Press Y to chose another vodka, press N to leave \n")
-        if if_continue == "Y":
+        if_continue = input("Press Y/y to chose another vodka, press N/n to leave \n")
+        if if_continue.isupper() == "Y":
             pass
-        elif if_continue == "N":
+        elif if_continue.isupper() == "N":
             break
 
 

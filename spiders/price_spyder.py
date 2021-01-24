@@ -6,11 +6,7 @@ import pandas as pd
 import unicodedata
 
 
-# Get clear link
-# data = pd.read_csv(r'C:/Users/Admin/Desktop/UW/PYTHON/Projekt/price_comparison/price_comparison/wujec_cwel.csv')
-# data['links'] = data['links'].apply(lambda x: x.split("'")[1])
 
-# gituwa
 class PriceSpider(scrapy.Spider):
     name = "foczka"
     today = date.today().strftime("%d/%m/%Y")
@@ -22,7 +18,7 @@ class PriceSpider(scrapy.Spider):
 
     def parse(self, response):
         items = PriceComparisonItem()
-
+        print("Checking foczkaalkohole...")
         items['store_name'] = 'Foczka Alkohole'
         items['date'] = self.today
 
@@ -48,7 +44,6 @@ class PriceSpider(scrapy.Spider):
             yield response.follow(next_page, callback=self.parse)
 
 
-# gituwa
 class PriceSpider2(scrapy.Spider):
     name = "hurtowo"
     today = date.today().strftime("%d/%m/%Y")
@@ -60,7 +55,7 @@ class PriceSpider2(scrapy.Spider):
 
     def parse(self, response):
         items = PriceComparisonItem()
-
+        print("Checking alkoholehurtowo...")
         items['store_name'] = 'Alkohole Hurtowo'
         items['date'] = self.today
 
@@ -86,7 +81,6 @@ class PriceSpider2(scrapy.Spider):
             yield response.follow(next_page, callback=self.parse)
 
 
-# gituwa
 class PriceSpider3(scrapy.Spider):
 
     name = 'amarone'
@@ -98,7 +92,7 @@ class PriceSpider3(scrapy.Spider):
 
     def parse(self, response):
         items = PriceComparisonItem()
-
+        print("Checking amarone...")
         items['store_name'] = 'Amarone'
         items['date'] = self.today
 
@@ -123,7 +117,6 @@ class PriceSpider3(scrapy.Spider):
             yield response.follow(next_page, callback=self.parse)
 
 
-# gituwa
 class PriceSpider4(scrapy.Spider):
 
     name = 'zagrosze'
@@ -135,7 +128,7 @@ class PriceSpider4(scrapy.Spider):
 
     def parse(self, response):
         items = PriceComparisonItem()
-
+        print("Checking zagrosze...")
         items['store_name'] = 'Alkohole za grosze'
         items['date'] = self.today
 
@@ -156,7 +149,7 @@ class PriceSpider4(scrapy.Spider):
             yield response.follow(next_page, callback=self.parse)
 
 
-# gituwa TU JEST ZJEBANE
+
 class PriceSpider5(scrapy.Spider):
 
     name = 'alkohol_online'
@@ -167,7 +160,7 @@ class PriceSpider5(scrapy.Spider):
 
     def parse(self, response):
         items = PriceComparisonItem()
-
+        print("Checking alkohol online...")
         items['store_name'] = 'Alkohol online'
         items['date'] = self.today
 
@@ -200,7 +193,7 @@ class PriceSpider6(scrapy.Spider):
 
     def parse(self, response):
         items = PriceComparisonItem()
-
+        print("Checking hurtownia alkoholi...")
         items['store_name'] = 'Hurtownia alkoholi'
         items['date'] = self.today
 
@@ -234,7 +227,7 @@ class PriceSpider7(scrapy.Spider):
 
     def parse(self, response):
         items = PriceComparisonItem()
-
+        print("Checking alkohole swiata...")
         items['store_name'] = 'Alkohole Swiata'
         items['date'] = self.today
 
@@ -264,7 +257,7 @@ class PriceSpider8(scrapy.Spider):
 
     def parse(self, response):
         items = PriceComparisonItem()
-
+        print("Checking propaganda24...")
         items['store_name'] = 'Propaganda24'
         items['date'] = self.today
 
@@ -297,7 +290,7 @@ class PriceSpider9(scrapy.Spider):
 
     def parse(self, response):
         items = PriceComparisonItem()
-
+        print("checking forfiter...")
         items['store_name'] = 'Forfiter'
         items['date'] = self.today
 
@@ -332,7 +325,7 @@ class PriceSpider10(scrapy.Spider):
 
     def parse(self, response):
         items = PriceComparisonItem()
-
+        print("checking smoczajama...")
         items['store_name'] = 'Smacza jama'
         items['date'] = self.today
 
