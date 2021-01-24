@@ -13,3 +13,4 @@ class PriceComparisonItem(scrapy.Item):
     store_name = scrapy.Field()
     product = scrapy.Field()
     date = scrapy.Field()
+    category = scrapy.Field()
