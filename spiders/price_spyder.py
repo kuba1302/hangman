@@ -6,11 +6,7 @@ import pandas as pd
 import unicodedata
 
 
-# Get clear link
-# data = pd.read_csv(r'C:/Users/Admin/Desktop/UW/PYTHON/Projekt/price_comparison/price_comparison/wujec_cwel.csv')
-# data['links'] = data['links'].apply(lambda x: x.split("'")[1])
 
-# gituwa
 class PriceSpider(scrapy.Spider):
     name = "foczka"
     today = date.today().strftime("%d/%m/%Y")
@@ -22,7 +18,7 @@ class PriceSpider(scrapy.Spider):
 
     def parse(self, response):
         items = PriceComparisonItem()
-
+        print("Checking foczkaalkohole...")
         items['store_name'] = 'Foczka Alkohole'
         items['date'] = self.today
 
@@ -30,12 +26,13 @@ class PriceSpider(scrapy.Spider):
         for vodka in response.xpath("//*[@id='main']/div/ul/li"):
             items['product'] = vodka.xpath("//*[@id='main']/div/ul/li[{}]/div[2]/a[1]/h3//text()".format(i)).extract()
             price = vodka.css("bdi::text").extract()
-            if len(price)>0:
-                price[0] = unicodedata.normalize("NFKD", price[0])
-                price[0] = price[0].replace("zł", "")
-                items['price'] = price[0].replace(" ", "")
-            else:
-                items['price'] = price
+            items['price'] = price
+            # if len(price)>0:
+            #     price[0] = unicodedata.normalize("NFKD", price[0])
+            #     price[0] = price[0].replace("zł", "")
+            #     items['price'] = price[0].replace(" ", "")
+            # else:
+            #     items['price'] = price
 
             i += 1
             yield items
@@ -47,7 +44,6 @@ class PriceSpider(scrapy.Spider):
             yield response.follow(next_page, callback=self.parse)
 
 
-# gituwa
 class PriceSpider2(scrapy.Spider):
     name = "hurtowo"
     today = date.today().strftime("%d/%m/%Y")
@@ -59,7 +55,7 @@ class PriceSpider2(scrapy.Spider):
 
     def parse(self, response):
         items = PriceComparisonItem()
-
+        print("Checking alkoholehurtowo...")
         items['store_name'] = 'Alkohole Hurtowo'
         items['date'] = self.today
 
@@ -67,12 +63,13 @@ class PriceSpider2(scrapy.Spider):
         while i <= 9:
             items['product'] = response.xpath('//*[@id="woo-products-wrap"]/ul/li[{}]/div/div[2]/h3/a/text()'.format(i)).extract()
             price = response.xpath('//*[@id="woo-products-wrap"]/ul/li[{}]/div/div[2]/div/div[1]/h4/span/text()'.format(i)).extract()
-            if len(price) > 0:
-                price[0] = unicodedata.normalize("NFKD", price[0])
-                price[0] = price[0].replace("zł", "")
-                items['price'] = price[0].replace(" ", "")
-            else:
-                items['price'] = price
+            items['price'] = price
+            # if len(price) > 0:
+            #     price[0] = unicodedata.normalize("NFKD", price[0])
+            #     price[0] = price[0].replace("zł", "")
+            #     items['price'] = price[0].replace(" ", "")
+            # else:
+            #     items['price'] = price
 
             i += 1
             yield items
@@ -84,7 +81,6 @@ class PriceSpider2(scrapy.Spider):
             yield response.follow(next_page, callback=self.parse)
 
 
-# gituwa
 class PriceSpider3(scrapy.Spider):
 
     name = 'amarone'
@@ -96,7 +92,7 @@ class PriceSpider3(scrapy.Spider):
 
     def parse(self, response):
         items = PriceComparisonItem()
-
+        print("Checking amarone...")
         items['store_name'] = 'Amarone'
         items['date'] = self.today
 
@@ -104,12 +100,13 @@ class PriceSpider3(scrapy.Spider):
         for vodka in all_vodkas:
             items['product'] = vodka.css("h2.product-title a::text").extract()
             price = vodka.css("span.PricesalesPrice::text").extract()
-            if len(price) > 0:
-                price[0] = unicodedata.normalize("NFKD", price[0])
-                price[0] = price[0].replace("zł", "")
-                items['price'] = price[0].replace(" ", "")
-            else:
-                items['price'] = price
+            items['price'] = price
+            # if len(price) > 0:
+            #     price[0] = unicodedata.normalize("NFKD", price[0])
+            #     price[0] = price[0].replace("zł", "")
+            #     items['price'] = price[0].replace(" ", "")
+            # else:
+            #     items['price'] = price
 
             yield items
 
@@ -120,7 +117,6 @@ class PriceSpider3(scrapy.Spider):
             yield response.follow(next_page, callback=self.parse)
 
 
-# gituwa
 class PriceSpider4(scrapy.Spider):
 
     name = 'zagrosze'
@@ -132,7 +128,7 @@ class PriceSpider4(scrapy.Spider):
 
     def parse(self, response):
         items = PriceComparisonItem()
-
+        print("Checking zagrosze...")
         items['store_name'] = 'Alkohole za grosze'
         items['date'] = self.today
 
@@ -140,9 +136,10 @@ class PriceSpider4(scrapy.Spider):
         for vodka in all_vodkas:
             items['product'] = vodka.css("a.product-name::text").extract()
             price = vodka.css("span.product-price::text").extract()
-            price[0] = unicodedata.normalize("NFKD", price[0])
-            price[0] = price[0].replace("zł", "")
-            items['price'] = price[0].replace(" ", "")
+            # price[0] = unicodedata.normalize("NFKD", price[0])
+            # price[0] = price[0].replace("zł", "")
+            # items['price'] = price[0].replace(" ", "")
+            items['price'] = price
             yield items
 
         next_page = 'https://alkoholezagrosze.pl/43-wodki-czyste?p=' + str(self.page_number)
@@ -152,7 +149,7 @@ class PriceSpider4(scrapy.Spider):
             yield response.follow(next_page, callback=self.parse)
 
 
-# gituwa
+
 class PriceSpider5(scrapy.Spider):
 
     name = 'alkohol_online'
@@ -163,7 +160,7 @@ class PriceSpider5(scrapy.Spider):
 
     def parse(self, response):
         items = PriceComparisonItem()
-
+        print("Checking alkohol online...")
         items['store_name'] = 'Alkohol online'
         items['date'] = self.today
 
@@ -196,7 +193,7 @@ class PriceSpider6(scrapy.Spider):
 
     def parse(self, response):
         items = PriceComparisonItem()
-
+        print("Checking hurtownia alkoholi...")
         items['store_name'] = 'Hurtownia alkoholi'
         items['date'] = self.today
 
@@ -204,9 +201,10 @@ class PriceSpider6(scrapy.Spider):
         for vodka in all_vodkas:
             items['product'] = vodka.css("a.href_fix h4::text").extract()
             price = vodka.css("span.cena-brutto::text").extract()
-            price[0] = unicodedata.normalize("NFKD", price[0])
-            price[0] = price[0].replace("zł", "")
-            items['price'] = price[0].replace(" ", "")
+            items['price'] = price
+            # price[0] = unicodedata.normalize("NFKD", price[0])
+            # price[0] = price[0].replace("zł", "")
+            # items['price'] = price[0].replace(" ", "")
 
             yield items
 
@@ -229,7 +227,7 @@ class PriceSpider7(scrapy.Spider):
 
     def parse(self, response):
         items = PriceComparisonItem()
-
+        print("Checking alkohole swiata...")
         items['store_name'] = 'Alkohole Swiata'
         items['date'] = self.today
 
@@ -259,7 +257,7 @@ class PriceSpider8(scrapy.Spider):
 
     def parse(self, response):
         items = PriceComparisonItem()
-
+        print("Checking propaganda24...")
         items['store_name'] = 'Propaganda24'
         items['date'] = self.today
 
@@ -292,7 +290,7 @@ class PriceSpider9(scrapy.Spider):
 
     def parse(self, response):
         items = PriceComparisonItem()
-
+        print("checking forfiter...")
         items['store_name'] = 'Forfiter'
         items['date'] = self.today
 
@@ -301,9 +299,10 @@ class PriceSpider9(scrapy.Spider):
             product = vodka.css("a.product-item-link::text").extract()
             items['product'] = product[0].strip()
             price = vodka.css("span.price::text").extract()
-            price[0] = unicodedata.normalize("NFKD", price[0])
-            price[0] = price[0].replace("zł", "")
-            items['price'] = price[0].replace(" ", "")
+            # price[0] = unicodedata.normalize("NFKD", price[0])
+            # price[0] = price[0].replace("zł", "")
+            # items['price'] = price[0].replace(" ", "")
+            items['price'] = price
 
             yield items
 
@@ -326,7 +325,7 @@ class PriceSpider10(scrapy.Spider):
 
     def parse(self, response):
         items = PriceComparisonItem()
-
+        print("checking smoczajama...")
         items['store_name'] = 'Smacza jama'
         items['date'] = self.today
 
@@ -338,6 +337,7 @@ class PriceSpider10(scrapy.Spider):
             price[0] = unicodedata.normalize("NFKD", price[0])
             price[0] = price[0].replace("zł", "")
             items['price'] = price[0].replace(" ", "")
+
 
             yield items
 
