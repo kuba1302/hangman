@@ -8,7 +8,6 @@ from price_comparison.price_comparison.spiders.price_spyder import *
 
 process = CrawlerProcess(settings={
     "FEEDS": {
-        "vodka.csv": {"format": "csv"},
     },
 })
 
