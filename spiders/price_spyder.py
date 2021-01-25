@@ -12,7 +12,10 @@ class PriceSpider(scrapy.Spider):
 
     start_urls = ['https://www.foczkaalkohole.pl/kategoria-produktu/wodka/']
     base_url = 'https://www.foczkaalkohole.pl/kategoria-produktu/'
-
+    categories = {"url": ["wodka", "wino", "whisky", "likiery", "tequila", "rum", "gin", "koniaki"],
+                  "type": ["vodka", "wine", "whisky", "liqueur", "tequila", "rum", "gin", "brandy"],
+                  "pages": [5, 6, 4, 2, 1, 1, 1, 1]
+                  }
     instance = 0
     page_number = 2
 
