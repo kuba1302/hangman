@@ -4,7 +4,7 @@ from datetime import date
 import logging
 import pandas as pd
 import unicodedata
-
+from time import sleep
 
 class PriceSpider(scrapy.Spider):
     name = "foczka"
@@ -56,6 +56,13 @@ class PriceSpider(scrapy.Spider):
 class PriceSpider2(scrapy.Spider):
     name = "hurtowo"
     today = date.today().strftime("%d/%m/%Y")
+    categories = {"url": ["wodki", "wina", "whiskey", "rumy", "wina-musujace"],
+                  "type": ["vodka", "wine", "whisky", "rum", "champagne"],
+                  "pages": [5, 8, 4, 1, 2]
+                  }
+    base_url = 'https://alkoholehurtowo.pl/kategoria-produktu/'
+    instance = 0
+    max_instance = len(categories['pages'])
     page_number = 2
     start_urls = [
         'https://alkoholehurtowo.pl/kategoria-produktu/rodzaje-alkoholi/wodki/'
@@ -66,6 +73,7 @@ class PriceSpider2(scrapy.Spider):
         print("Checking alkoholehurtowo...")
         items['store_name'] = 'Alkohole Hurtowo'
         items['date'] = self.today
+        items['category'] = self.categories["type"][self.instance]
 
         i = 1
         while i <= 9:
@@ -82,18 +90,31 @@ class PriceSpider2(scrapy.Spider):
             i += 1
             yield items
 
-        next_page = 'https://alkoholehurtowo.pl/kategoria-produktu/rodzaje-alkoholi/wodki/page/{}/'.format(self.page_number)
+        next_page = self.base_url + self.categories["url"][self.instance] + "/page/" + str(self.page_number)
 
-        if self.page_number <= 5:
+        if self.page_number <= int(self.categories['pages'][self.instance]):
             self.page_number += 1
             yield response.follow(next_page, callback=self.parse)
-
+        elif self.instance < (len(self.categories["pages"]) - 1):
+            self.instance += 1
+            self.page_number = 2
+            next_page = self.base_url + self.categories["url"][self.instance]
+            yield response.follow(next_page, callback=self.parse)
 
 class PriceSpider3(scrapy.Spider):
 
     name = 'amarone'
+    base_url = 'http://www.amarone.pl/index.php/'
     today = date.today().strftime("%d/%m/%Y")
+    categories = {"url": ["alkohole/wodki", "wina/wina-kolor", "whisky/whisky1", "alkohole/rumy","alkohole/wszystkie-alkohole-3/likiery",
+                          "alkohole/wszystkie-alkohole-3/gin", "alkohole/cognac/brandy", "alkohole/cognac/armaniak-2"
+                          , "wina/wina-mussujace/wina-musujace"],
+                  "type": ["vodka", "wine", "whisky", "rum", "liqueur", "gin", "brandy", "cognac", "champagne"],
+                  "pages": [12, 4, 18, 3, 7, 2, 4, 2, 2]
+                  }
     page_number = 99
+    instance = 0
+    max_instance = len(categories['pages'])
     start_urls = [
         'http://www.amarone.pl/index.php/alkohole/wodki'
     ]
@@ -103,7 +124,7 @@ class PriceSpider3(scrapy.Spider):
         print("Checking amarone...")
         items['store_name'] = 'Amarone'
         items['date'] = self.today
-
+        items['category'] = self.categories["type"][self.instance]
         all_vodkas = response.css("div.spacer")
         for vodka in all_vodkas:
             items['product'] = vodka.css("h2.product-title a::text").extract()
@@ -118,14 +139,18 @@ class PriceSpider3(scrapy.Spider):
 
             yield items
 
-        next_page = "http://www.amarone.pl/index.php/alkohole/wodki?start={}".format(self.page_number)
+        next_page = self.base_url + self.categories["url"][self.instance] + "?start=" + str(self.page_number)
 
-        if self.page_number <= 1089:
+        if self.page_number <= int(self.categories['pages'][self.instance]) * 99:
             self.page_number += 99
             yield response.follow(next_page, callback=self.parse)
+        elif self.instance < (len(self.categories["pages"]) - 1):
+            self.instance += 1
+            self.page_number = 2
+            next_page = self.base_url + self.categories["url"][self.instance]
+            yield response.follow(next_page, callback=self.parse)
 
-
-class PriceSpider4(scrapy.Spider):
+class PriceSpider4(scrapy.Spider):#w trakcie
 
     name = 'zagrosze'
     today = date.today().strftime("%d/%m/%Y")
@@ -133,13 +158,20 @@ class PriceSpider4(scrapy.Spider):
     start_urls = [
         'https://alkoholezagrosze.pl/43-wodki-czyste'
     ]
+    categories = {"url": ["19-wodka", "13-wina", "18-whisky-bourbon", "20-rum-cachaca", "24-likiery", "58-brandy", "14-szampany"],
+                  "type": ["vodka", "wine", "whisky", "rum", "liqeur", "brandy", "champagne"],
+                  "pages": [5, 7, 3, 1, 1, 1, 1]
+                  }
+    instance = 0
+    max_instance = len(categories['pages'])
+    base_url = 'https://alkoholezagrosze.pl/'
 
     def parse(self, response):
         items = PriceComparisonItem()
         print("Checking zagrosze...")
         items['store_name'] = 'Alkohole za grosze'
         items['date'] = self.today
-
+        items['category'] = self.categories["type"][self.instance]
         all_vodkas = response.css("div.border_inside")
         for vodka in all_vodkas:
             items['product'] = vodka.css("a.product-name::text").extract()
@@ -150,27 +182,43 @@ class PriceSpider4(scrapy.Spider):
             items['price'] = price
             yield items
 
-        next_page = 'https://alkoholezagrosze.pl/43-wodki-czyste?p=' + str(self.page_number)
+        next_page = self.base_url + self.categories["url"][self.instance] + "?p=" + str(self.page_number)
 
-        if self.page_number <= 5:
+        if self.page_number <= int(self.categories['pages'][self.instance]):
             self.page_number += 1
             yield response.follow(next_page, callback=self.parse)
-
+        elif self.instance < (len(self.categories["pages"]) - 1):
+            self.instance += 1
+            self.page_number = 2
+            next_page = self.base_url + self.categories["url"][self.instance]
+            yield response.follow(next_page, callback=self.parse)
 
 class PriceSpider5(scrapy.Spider):
 
     name = 'alkohol_online'
+    page_number = 2
     today = date.today().strftime("%d/%m/%Y")
     start_urls = [
-        'https://alkohol-online.pl/18-czysta-biala?id_category=18&n=110'
+        'https://alkohol-online.pl/17-wodka'
     ]
+    categories = {
+        "url": ["17-wodka", "34-wytrawne", "21-whisky", "25-rum", "44-likiery", "20-brandy", "31-szampany",  "36-polwytrawne", "37-slodkie", "38-polslodkie", "22-gin", "23-tequila"],
+        "type": ["vodka", "wine", "whisky", "rum", "liqeur", "brandy", "champagne", "wine", "wine", "wine" ,"gin", "tequila"],
+        "pages": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        }
+    #[4, 1, 3, 1, 2, 1, 1, 1, 1, 1, 1, 1]
+    instance = 0
+    max_instance = len(categories['pages'])
+    base_url = 'https://alkohol-online.pl/'
+
 
     def parse(self, response):
+        sleep(2)
         items = PriceComparisonItem()
         print("Checking alkohol online...")
         items['store_name'] = 'Alkohol online'
         items['date'] = self.today
-
+        items['category'] = self.categories["type"][self.instance]
         all_vodkas = response.css("div.product-container")
         for vodka in all_vodkas:
             product = vodka.css("span.product-name a::text").extract()
@@ -186,6 +234,16 @@ class PriceSpider5(scrapy.Spider):
             items['price'] = price
 
             yield items
+        next_page = self.base_url + self.categories["url"][self.instance] + "#/page-" + str(self.page_number)
+        print("next_page:", next_page)
+        if self.page_number <= int(self.categories['pages'][self.instance]):
+            self.page_number += 1
+            yield response.follow(next_page, callback=self.parse)
+        elif self.instance < (len(self.categories["pages"]) - 1):
+            self.instance += 1
+            self.page_number = 2
+            next_page = self.base_url + self.categories["url"][self.instance]
+            yield response.follow(next_page, callback=self.parse)
 
 
 class PriceSpider6(scrapy.Spider):
@@ -196,13 +254,23 @@ class PriceSpider6(scrapy.Spider):
     start_urls = [
         'https://hurtowniaalkoholi.pl/products/list/category/W%C3%B3dki'
     ]
+    categories = {
+        "url": ["Wódki", "Wino/country/Bułgaria/msg/Bułgaria", "Whisky", "Rum", "Likiery", "Brandy", "Szampany+-+wina+musuj%25C4%2585ce",
+                "Wino/country/Chile/msg/Chile", "Wino/country/Gruzja/msg/Gruzja", "Wino/country/Polska/msg/Polska", "Gin", "Tequila"],
+        "type": ["vodka", "wine", "whisky", "rum", "liqeur", "brandy", "champagne", "wine", "wine", "wine", "gin",
+                 "tequila"],
+        "pages": [9, 1, 4, 2, 4, 1, 1, 1, 1, 1, 1, 1]
+    }
+    instance = 0
+    max_instance = len(categories['pages'])
+    base_url = 'https://hurtowniaalkoholi.pl/products/list/category/'
 
     def parse(self, response):
         items = PriceComparisonItem()
         print("Checking hurtownia alkoholi...")
         items['store_name'] = 'Hurtownia alkoholi'
         items['date'] = self.today
-
+        items['category'] = self.categories["type"][self.instance]
         all_vodkas = response.css("div.col-md-8")
         for vodka in all_vodkas:
             items['product'] = vodka.css("a.href_fix h4::text").extract()
@@ -214,10 +282,16 @@ class PriceSpider6(scrapy.Spider):
 
             yield items
 
-        next_page = 'https://hurtowniaalkoholi.pl/products/list/category/W%C3%B3dki/page/' + str(self.page_number)
 
-        if self.page_number <= 9:
+        next_page = self.base_url + self.categories["url"][self.instance] + "/page/" + str(self.page_number)
+
+        if self.page_number <= int(self.categories['pages'][self.instance]):
             self.page_number += 1
+            yield response.follow(next_page, callback=self.parse)
+        elif self.instance < (len(self.categories["pages"]) - 1):
+            self.instance += 1
+            self.page_number = 2
+            next_page = self.base_url + self.categories["url"][self.instance]
             yield response.follow(next_page, callback=self.parse)
 
 
