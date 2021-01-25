@@ -12,10 +12,7 @@ class PriceSpider(scrapy.Spider):
 
     start_urls = ['https://www.foczkaalkohole.pl/kategoria-produktu/wodka/']
     base_url = 'https://www.foczkaalkohole.pl/kategoria-produktu/'
-    categories = {"url": ["wodka", "wino", "whisky", ],
-                  "type": ["vodka", "wine", "whisky"],
-                  "pages": [5, 6, 4]
-                  }
+
     instance = 0
     page_number = 2
 
