@@ -29,7 +29,7 @@ df['price'] = df['price'].apply(lambda x: x.translate({ord(c): None for c in str
 df['price'] = df['price'].astype(str).str.replace(u'\xa0', '')
 df['price'] = df['price'].str.extract(r'(\d+.\d+)').astype('float')
 df = df.reset_index(drop=True)
-print(df)
+
 
 def making_tables():
     hostname = "localhost"
@@ -67,12 +67,13 @@ def selecting_alcohol(category, name, capacity):
             best_price_list.append(i)
         for i in best_price_list[:5]:
             print(i)
-
+        if len(best_price_list) == 0:
+            print("Wooops \n There are no {}-s called {} :(".format(category, name))
     else:
         print("Wrong category!")
 
 
-selecting_alcohol('vodka', 'stock', '0.7')
+selecting_alcohol('vodka', 'zubrowka', '0.5')
 
 
 
