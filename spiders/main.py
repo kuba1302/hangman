@@ -16,19 +16,22 @@ spiders = [PriceSpider ,PriceSpider2 ,PriceSpider3 ,PriceSpider4,
            PriceSpider5 ,PriceSpider6 ,PriceSpider7, PriceSpider8,
            PriceSpider9, PriceSpider10]
 
+def crawling():
+    for spider in spiders:
+        process.crawl(spider)
+        process.start()
 
-
-
-df = pd.read_csv(r'C:\Users\Admin\Desktop\UW\PYTHON\Projekt\price_comparison\price_comparison\spiders\vodka.csv')
-df.dropna()
-df = df[~df['price'].isnull()]
-df.drop(df.loc[df['price'] == 'price'].index, inplace=True)
-df['price'] = df['price'].apply(lambda x: x.replace(",", "."))
-df['price'] = df['price'].apply(lambda x: x.replace("zł", ""))
-df['price'] = df['price'].apply(lambda x: x.translate({ord(c): None for c in string.whitespace}))
-df['price'] = df['price'].astype(str).str.replace(u'\xa0', '')
-df['price'] = df['price'].str.extract(r'(\d+.\d+)').astype('float')
-df = df.reset_index(drop=True)
+def preparing_data():
+    df = pd.read_csv(r'C:\Users\Admin\Desktop\UW\PYTHON\Projekt\price_comparison\price_comparison\spiders\vodka.csv')
+    df.dropna()
+    df = df[~df['price'].isnull()]
+    df.drop(df.loc[df['price'] == 'price'].index, inplace=True)
+    df['price'] = df['price'].apply(lambda x: x.replace(",", "."))
+    df['price'] = df['price'].apply(lambda x: x.replace("zł", ""))
+    df['price'] = df['price'].apply(lambda x: x.translate({ord(c): None for c in string.whitespace}))
+    df['price'] = df['price'].astype(str).str.replace(u'\xa0', '')
+    df['price'] = df['price'].str.extract(r'(\d+.\d+)').astype('float')
+    df = df.reset_index(drop=True)
 
 
 def making_tables():
@@ -68,13 +71,12 @@ def selecting_alcohol(category, name, capacity):
         for i in best_price_list[:5]:
             print(i)
         if len(best_price_list) == 0:
-            print("Wooops \n There are no {}-s called {} :(".format(category, name))
+            print("Wooops! \nThere are no {}-s called {} with {} capacity:(".format(category, name, capacity))
     else:
         print("Wrong category!")
 
 
-selecting_alcohol('vodka', 'zubrowka', '0.5')
-
+selecting_alcohol('vodka', 'zubrowkfdfa', '0.5')
 
 
 
