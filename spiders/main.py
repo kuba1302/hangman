@@ -21,6 +21,7 @@ def crawling():
         process.crawl(spider)
         process.start()
 
+# Put your location of \spiders folder
 df = pd.read_csv(r'C:\Users\Admin\Desktop\UW\PYTHON\Projekt\price_comparison\price_comparison\spiders\vodka.csv')
 df.dropna()
 df = df[~df['price'].isnull()]
@@ -63,10 +64,16 @@ def selecting_alcohol(category, name, capacity):
     alcohol_names = ["vodka", "wine", "whisky", "liqueur", "tequila", "rum", "gin", "brandy", "cognac", "champagne"]
     if category in alcohol_names:
         my_cursor = mydb.cursor()
-        order = "SELECT * FROM {} WHERE product LIKE '%{}%' AND product LIKE '%{}%' ORDER BY price".format(category, name, capacity)
-        my_cursor.execute(order)
+        order1 ="SELECT * FROM {} WHERE product LIKE '%{}%' AND product LIKE '%{}%' ORDER BY price".format(category,name,capacity)
+        my_cursor.execute(order1)
         for i in my_cursor:
             best_price_list.append(i)
+        my_cursor = mydb.cursor()
+        order2 = "SELECT * FROM {} WHERE product LIKE '%{}%' AND product LIKE '%{}%' ORDER BY price".format(category, name, (str(int(float(capacity) * 1000))))
+        my_cursor.execute(order2)
+        for i in my_cursor:
+            best_price_list.append(i)
+        best_price_list = sorted(best_price_list, key=lambda x: x[-3], reverse=False)
         for i in best_price_list[:5]:
             print(i)
         if len(best_price_list) == 0:
@@ -75,7 +82,7 @@ def selecting_alcohol(category, name, capacity):
         print("Wrong category!")
 
 
-selecting_alcohol('vodka', 'stock', '500')
+selecting_alcohol('vodka', 'zubrowka', '0.5')
 
 
 
