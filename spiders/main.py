@@ -1,4 +1,3 @@
-import scrapy
 from scrapy.crawler import CrawlerProcess
 import pandas as pd
 from price_comparison.price_comparison.spiders.price_spyder import *
@@ -8,7 +7,7 @@ import mysql.connector
 
 process = CrawlerProcess(settings={
     "FEEDS": {
-        "alco.csv": {"format": "csv"},
+        "alcohol.csv": {"format": "csv"},
     },
 })
 
@@ -23,8 +22,7 @@ def crawling():
 
 def preparring_data():
     global df
-    # Put your location of \spiders folder with \alco.csv at the end
-    df = pd.read_csv(r'C:\Users\Admin\Desktop\UW\PYTHON\Projekt\price_comparison\price_comparison\spiders\alco.csv')
+    df = pd.read_csv('alcohol.csv')
     df.dropna()
     df = df[~df['price'].isnull()]
     df.drop(df.loc[df['price'] == 'price'].index, inplace=True)

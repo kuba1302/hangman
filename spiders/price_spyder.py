@@ -28,13 +28,6 @@ class PriceSpider(scrapy.Spider):
             items['product'] = alcohol.xpath("//*[@id='main']/div/ul/li[{}]/div[2]/a[1]/h3//text()".format(i)).extract()
             price = alcohol.css("bdi::text").extract()
             items['price'] = price
-            # if len(price)>0:
-            #     price[0] = unicodedata.normalize("NFKD", price[0])
-            #     price[0] = price[0].replace("zł", "")
-            #     items['price'] = price[0].replace(" ", "")
-            # else:
-            #     items['price'] = price
-
             i += 1
             yield items
 
@@ -76,13 +69,6 @@ class PriceSpider2(scrapy.Spider):
             price = response.xpath(
                 '//*[@id="woo-products-wrap"]/ul/li[{}]/div/div[2]/div/div[1]/h4/span/text()'.format(i)).extract()
             items['price'] = price
-            # if len(price) > 0:
-            #     price[0] = unicodedata.normalize("NFKD", price[0])
-            #     price[0] = price[0].replace("zł", "")
-            #     items['price'] = price[0].replace(" ", "")
-            # else:
-            #     items['price'] = price
-
             i += 1
             yield items
 
@@ -123,13 +109,6 @@ class PriceSpider3(scrapy.Spider):
             items['product'] = alcohol.css("h2.product-title a::text").extract()
             price = alcohol.css("span.PricesalesPrice::text").extract()
             items['price'] = price
-            # if len(price) > 0:
-            #     price[0] = unicodedata.normalize("NFKD", price[0])
-            #     price[0] = price[0].replace("zł", "")
-            #     items['price'] = price[0].replace(" ", "")
-            # else:
-            #     items['price'] = price
-
             yield items
 
         next_page = self.base_url + self.categories["url"][self.instance] + "?start=" + str(self.page_number)
@@ -167,9 +146,6 @@ class PriceSpider4(scrapy.Spider):
         for alcohol in all_alcohols:
             items['product'] = alcohol.css("a.product-name::text").extract()
             price = alcohol.css("span.product-price::text").extract()
-            # price[0] = unicodedata.normalize("NFKD", price[0])
-            # price[0] = price[0].replace("zł", "")
-            # items['price'] = price[0].replace(" ", "")
             items['price'] = price
             yield items
 
@@ -217,10 +193,8 @@ class PriceSpider5(scrapy.Spider):
             price[0] = price[0].strip()
             items['price'] = price[0].replace(" ", "")
             del price[1]
-
             items['product'] = product
             items['price'] = price
-
             yield items
 
         next_page = self.base_url + self.categories["url"][self.instance] + "#/page-" + str(self.page_number)
@@ -262,10 +236,6 @@ class PriceSpider6(scrapy.Spider):
             items['product'] = alcohol.css("a.href_fix h4::text").extract()
             price = alcohol.css("span.cena-brutto::text").extract()
             items['price'] = price
-            # price[0] = unicodedata.normalize("NFKD", price[0])
-            # price[0] = price[0].replace("zł", "")
-            # items['price'] = price[0].replace(" ", "")
-
             yield items
 
         next_page = self.base_url + self.categories["url"][self.instance] + "/page/" + str(self.page_number)
@@ -304,7 +274,6 @@ class PriceSpider7(scrapy.Spider):
         for alcohol in all_alcohols:
             items['product'] = alcohol.css("h3.productName a::attr(title)").extract()
             items['price'] = alcohol.css("span.price::text").extract()
-
             yield items
 
         next_page = self.base_url + str(self.page_number) + '&kat=' + self.categories["url"][self.instance]
@@ -348,7 +317,6 @@ class PriceSpider8(scrapy.Spider):
             price[0] = unicodedata.normalize("NFKD", price[0])
             price[0] = price[0].replace("zł", "")
             items['price'] = price[0].replace(" ", "")
-
             yield items
 
         next_page = self.base_url + self.categories["url"][self.instance] + "/" + str(self.page_number)
@@ -390,11 +358,7 @@ class PriceSpider9(scrapy.Spider):
             product = alcohol.css("a.product-item-link::text").extract()
             items['product'] = product[0].strip()
             price = alcohol.css("span.price::text").extract()
-            # price[0] = unicodedata.normalize("NFKD", price[0])
-            # price[0] = price[0].replace("zł", "")
-            # items['price'] = price[0].replace(" ", "")
             items['price'] = price
-
             yield items
 
         next_page = self.base_url + self.categories["url"][self.instance] + '/?p=' + str(self.page_number)
@@ -438,7 +402,6 @@ class PriceSpider10(scrapy.Spider):
             price[0] = unicodedata.normalize("NFKD", price[0])
             price[0] = price[0].replace("zł", "")
             items['price'] = price[0].replace(" ", "")
-
             yield items
 
         next_page = self.base_url + self.categories["url"][self.instance] + "/" + str(self.page_number)
