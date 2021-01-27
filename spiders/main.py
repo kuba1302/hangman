@@ -21,17 +21,16 @@ def crawling():
         process.crawl(spider)
         process.start()
 
-def preparing_data():
-    df = pd.read_csv(r'C:\Users\Admin\Desktop\UW\PYTHON\Projekt\price_comparison\price_comparison\spiders\vodka.csv')
-    df.dropna()
-    df = df[~df['price'].isnull()]
-    df.drop(df.loc[df['price'] == 'price'].index, inplace=True)
-    df['price'] = df['price'].apply(lambda x: x.replace(",", "."))
-    df['price'] = df['price'].apply(lambda x: x.replace("zł", ""))
-    df['price'] = df['price'].apply(lambda x: x.translate({ord(c): None for c in string.whitespace}))
-    df['price'] = df['price'].astype(str).str.replace(u'\xa0', '')
-    df['price'] = df['price'].str.extract(r'(\d+.\d+)').astype('float')
-    df = df.reset_index(drop=True)
+df = pd.read_csv(r'C:\Users\Admin\Desktop\UW\PYTHON\Projekt\price_comparison\price_comparison\spiders\vodka.csv')
+df.dropna()
+df = df[~df['price'].isnull()]
+df.drop(df.loc[df['price'] == 'price'].index, inplace=True)
+df['price'] = df['price'].apply(lambda x: x.replace(",", "."))
+df['price'] = df['price'].apply(lambda x: x.replace("zł", ""))
+df['price'] = df['price'].apply(lambda x: x.translate({ord(c): None for c in string.whitespace}))
+df['price'] = df['price'].astype(str).str.replace(u'\xa0', '')
+df['price'] = df['price'].str.extract(r'(\d+.\d+)').astype('float')
+df = df.reset_index(drop=True)
 
 
 def making_tables():
@@ -76,7 +75,7 @@ def selecting_alcohol(category, name, capacity):
         print("Wrong category!")
 
 
-selecting_alcohol('vodka', 'zubrowkfdfa', '0.5')
+selecting_alcohol('vodka', 'stock', '500')
 
 
 
