@@ -90,7 +90,7 @@ def selecting_alcohol(category, name, capacity):
 def should_scrap():
     loop = True
     while loop:
-        shall_crawl = input("Should I scrap all websites? \n Press Y/y for yes, N/n for no ").upper()
+        shall_crawl = input("Should I scrap all websites? \n Press Y for yes, N for no ").upper()
         if shall_crawl == "Y":
             crawling()
             loop = False
@@ -104,7 +104,7 @@ def should_scrap():
 def should_add_database():
     loop = True
     while loop:
-        shall_crawl = input("Should I add scraped data to database? \n Press Y/y for yes, N/n for no ").upper()
+        shall_crawl = input("Should I add scraped data to database? \n Press Y for yes, N for no ").upper()
         if shall_crawl == "Y":
             making_tables()
             loop = False
@@ -125,7 +125,7 @@ def find_alcohol():
         name1 = input("What is the name of the alcohol? ")
         capacity1 = input("What is the capacity of the alcohol?\n Write it in liters, for example 0.5 ")
         selecting_alcohol(category1, name1, capacity1)
-        shall_crawl = input("Do you want to find another one?\nPress Y/y for yes, N/n for no ").upper()
+        shall_crawl = input("Do you want to find another one?\nPress Y for yes, N for no ").upper()
         if shall_crawl == "Y":
             pass
         elif shall_crawl == "N":
