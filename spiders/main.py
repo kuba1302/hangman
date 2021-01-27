@@ -8,7 +8,7 @@ import mysql.connector
 
 process = CrawlerProcess(settings={
     "FEEDS": {
-        "vodka.csv": {"format": "csv"},
+        "alco.csv": {"format": "csv"},
     },
 })
 
@@ -19,24 +19,27 @@ spiders = [PriceSpider ,PriceSpider2 ,PriceSpider3 ,PriceSpider4,
 def crawling():
     for spider in spiders:
         process.crawl(spider)
-        process.start()
+    process.start()
 
-# Put your location of \spiders folder
-df = pd.read_csv(r'C:\Users\Admin\Desktop\UW\PYTHON\Projekt\price_comparison\price_comparison\spiders\vodka.csv')
-df.dropna()
-df = df[~df['price'].isnull()]
-df.drop(df.loc[df['price'] == 'price'].index, inplace=True)
-df['price'] = df['price'].apply(lambda x: x.replace(",", "."))
-df['price'] = df['price'].apply(lambda x: x.replace("zł", ""))
-df['price'] = df['price'].apply(lambda x: x.translate({ord(c): None for c in string.whitespace}))
-df['price'] = df['price'].astype(str).str.replace(u'\xa0', '')
-df['price'] = df['price'].str.extract(r'(\d+.\d+)').astype('float')
-df = df.reset_index(drop=True)
+def preparring_data():
+    global df
+    # Put your location of \spiders folder with \alco.csv at the end
+    df = pd.read_csv(r'C:\Users\Admin\Desktop\UW\PYTHON\Projekt\price_comparison\price_comparison\spiders\alco.csv')
+    df.dropna()
+    df = df[~df['price'].isnull()]
+    df.drop(df.loc[df['price'] == 'price'].index, inplace=True)
+    df['price'] = df['price'].apply(lambda x: x.replace(",", "."))
+    df['price'] = df['price'].apply(lambda x: x.replace("zł", ""))
+    df['price'] = df['price'].apply(lambda x: x.translate({ord(c): None for c in string.whitespace}))
+    df['price'] = df['price'].astype(str).str.replace(u'\xa0', '')
+    df['price'] = df['price'].str.extract(r'(\d+.\d+)').astype('float')
+    df = df.reset_index(drop=True)
 
 
 def making_tables():
+    # Put details of your database here
     hostname = "localhost"
-    dbname = "price_comparison"
+    dbname = "price_test"
     uname = "admin1"
     pwd = "price_comparison_project"
     engine = create_engine("mysql+pymysql://{user}:{pw}@{host}/{db}"
@@ -55,11 +58,12 @@ def making_tables():
 
 def selecting_alcohol(category, name, capacity):
     best_price_list = []
+    # Put details of your database here
     mydb = mysql.connector.connect(
         host="localhost",
         user="admin1",
         password="price_comparison_project",
-        database="price_comparison"
+        database="price_test"
     )
     alcohol_names = ["vodka", "wine", "whisky", "liqueur", "tequila", "rum", "gin", "brandy", "cognac", "champagne"]
     if category in alcohol_names:
@@ -82,42 +86,57 @@ def selecting_alcohol(category, name, capacity):
         print("Wrong category!")
 
 
-selecting_alcohol('vodka', 'zubrowka', '0.5')
+
+def should_scrap():
+    loop = True
+    while loop:
+        shall_crawl = input("Should I scrap all websites? \n Press Y/y for yes, N/n for no ").upper()
+        if shall_crawl == "Y":
+            crawling()
+            loop = False
+        elif shall_crawl == "N":
+            loop = False
+            pass
+        else:
+            print("Wops!\nYour input was incorrect!")
 
 
+def should_add_database():
+    loop = True
+    while loop:
+        shall_crawl = input("Should I add scraped data to database? \n Press Y/y for yes, N/n for no ").upper()
+        if shall_crawl == "Y":
+            making_tables()
+            loop = False
+        elif shall_crawl == "N":
+            loop = False
+            pass
+        else:
+            print("Wops!\nYour input was incorrect!")
 
-# df.to_sql('alcohol', con = engine, if_exists = 'append')
+def find_alcohol():
+    alcohol_names = ["vodka", "wine", "whisky", "liqueur", "tequila", "rum", "gin", "brandy", "cognac", "champagne"]
+    loop = True
+    while loop:
+        print("Lets find cheapest version of your alcohol!")
+        print("Possible categories:")
+        print(', '.join(alcohol_names))
+        category1 = input("What category of alcohol do you chose? ")
+        name1 = input("What is the name of the alcohol? ")
+        capacity1 = input("What is the capacity of the alcohol?\n Write it in liters, for example 0.5 ")
+        selecting_alcohol(category1, name1, capacity1)
+        shall_crawl = input("Do you want to find another one?\nPress Y/y for yes, N/n for no ").upper()
+        if shall_crawl == "Y":
+            pass
+        elif shall_crawl == "N":
+            break
+        else:
+            print("Wops!\nYour input was incorrect!, lets find another alcohol!")
 
 
-
-# 
-# df.to_sql('users', engine, index=False)
-
-
-# if __name__ == "__main__":
-#     # for spider in spiders:
-#     #     process.crawl(spider)
-#     # process.start()
-#     while True:
-#         df = pd.read_csv(r'C:\Users\Admin\Desktop\UW\PYTHON\Projekt\price_comparison\price_comparison\spiders\vodka.csv')
-#         df.dropna()
-#         df = df[~df['price'].isnull()]
-#         df.drop(df.loc[df['price'] == 'price'].index, inplace=True)
-#         df['price'] = df['price'].apply(lambda x: x.replace(",", "."))
-#         df['price'] = df['price'].apply(lambda x: x.replace("zł", ""))
-#         df['price'] = df['price'].apply(lambda x: x.translate({ord(c): None for c in string.whitespace}))
-#         df['price'] = df['price'].astype(str).str.replace(u'\xa0', '')
-#         df['price'] = df['price'].str.extract(r'(\d+.\d+)').astype('float')
-        # checked_vodka = input("What vodka do you want to check?\n")
-        # check_df = df.loc[df['product'].str.contains("{}".format(checked_vodka), na=False)]
-        # minimum = check_df.loc[check_df['price'] == check_df['price'].min()]
-        # print(minimum)
-        # if_continue = input("Press Y/y to chose another vodka, press N/n to leave \n")
-        # if if_continue.isupper() == "Y":
-        #     pass
-        # elif if_continue.isupper() == "N":
-        #     break
-
-
-    # df.loc[df['product'].str.containssssssdaa", na=False)]
-
+if __name__ == "__main__":
+    should_scrap()
+    preparring_data()
+    should_add_database()
+    find_alcohol()
+    print("Thank you for using our program!")
