@@ -81,7 +81,7 @@ def selecting_alcohol(category, name, capacity):
         for i in best_price_list[:5]:
             print(i)
         if len(best_price_list) == 0:
-            print("Wooops! \nThere are no {}-s called {} with {} capacity:(".format(category, name, capacity))
+            print("Whoops! \nThere are no {}-s called {} with {} capacity:(".format(category, name, capacity))
     else:
         print("Wrong category!")
 
